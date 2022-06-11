@@ -1,0 +1,42 @@
+=>console
+rails new demo
+rails generate scaffold post title:string content:text
+rails db:migrate
+rails s
+
+=>application.html.erb
+Add this line below <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>:
+<link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+
+for study:
+http://127.0.0.1:3000/posts.json
+
+=>app/models/post.rb
+validates_presence_of :title
+
+=>console
+rails action_text:install
+bundle
+rails db:migrate
+
+=>app/models/post.rb
+has_rich_text :content
+
+=>app/views/posts/_form.html.erb
+<div>
+  <%= form.label :content, style: "display: block" %>
+  <%= form.rich_text_area :content %>
+</div>
+
+=>console
+./bin/importmap pin local-time --download
+
+=>app/javascript/application.js
+import LocalTime from "local-time"
+LocalTime.start()
+
+
+=>app/views/posts/_post.html.erb
+<p>
+    Posted: <%= time_tag post.created_at, "data-local": "time-ago" %>
+</p>

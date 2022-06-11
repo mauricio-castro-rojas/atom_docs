@@ -1,0 +1,27 @@
+
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_migration.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_maps.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_davivienda.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_bot_ruaf.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_pay.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_core.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_registry.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_registry_co.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_payroll_co.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_pila_co.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_pay_co.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_liquidation_co.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_blog.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_benefit.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_core.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_employee.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_admin.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_liquidation.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_document.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_dashboard.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_incidence.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_pay.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_affiliation.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_registry.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_short_link.git
+git clone https://mauricioastro85@bitbucket.org/symplifica/sy_app_profile.git
