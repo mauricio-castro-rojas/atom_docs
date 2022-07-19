@@ -1,0 +1,33 @@
+Create a new repository on the command line:
+
+echo "# demo" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/mauricio-castro-sym/demo.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin https://github.com/mauricio-castro-sym/demo.git
+git branch -M main
+git push -u origin main
+
+
+Error:
+  Authentication is required for rubygems.pkg.github.com.
+  Please supply credentials for this source. You can do this by running:
+   bundle config set --global rubygems.pkg.github.com username:password
+
+ 1. delete Gemfile.lock if present
+
+ 2. ensure all listed engines in gemfile are downloaded
+
+ 3. all engines and syapp must be in main branch
+
+ 4. run bundle install
+
+
+Error
+  An engine doesn't display Git info, files are listed in green text.
+
+1. Open engine as attached window in syapp

@@ -1,0 +1,3 @@
+rails plugin new name_engine --mountable --skip-test --dummy-path=spec/dummy -d postgresql
+
+rails plugin new sy_bancolombia --mountable --skip-test --dummy-path=spec/dummy -d postgresql

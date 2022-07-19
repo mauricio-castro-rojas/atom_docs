@@ -4,13 +4,16 @@ rails generate scaffold post title:string content:text
 rails db:migrate
 rails s
 
+#add css
 =>application.html.erb
 Add this line below <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>:
 <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 
+
 for study:
 http://127.0.0.1:3000/posts.json
 
+#add validations to a model
 =>app/models/post.rb
 validates_presence_of :title
 
