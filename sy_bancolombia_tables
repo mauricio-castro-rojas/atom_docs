@@ -1,0 +1,77 @@
+SyBancolombia::Inscription::Payment
+
++ inscription: references(SyPay::PaymentMethod::Inscription)
++ delegated_inscription, polymorphic: true
+
+
+Juan Pablo Castiblanco
+  11:34 AM
+rails generate model SyRegistry::Contract::Creator creator:references{polymorphic}:index contract:references registration_start_date:date registration_end_date:date
+
+rails generate model Inscription::Payment delegated_inscription:references{polymorphic}:index inscription:references
+
+t.references :severance, null: false, foreign_key: { to_table: :sy_registry_co_social_benefit_severances }, index: { name: :idx_sypayco_socben_severance_massive_file_linkeable_severanceid }
+t.references :inscription, null: false, foreign_key: true
+
+t.references :inscription, null: false, foreign_key: { to_table: :sy_pay_payment_method_inscriptions }
+
+
+bundle exec rails generate logidze:model Inscription::Payment
+bundle exec rails db:migrate
+
+
+rails app:db:environment:set
+
+----------------------------------------------------------------------------------------
+SyBancolombia::Collection::Inscription::Payment
+
+default_scope -> { kept}
+
++ kind: (inscription: 23, retirement: 25) **********
++ file: references, class_name: SyBancolombia::Collection::Inscription::Payment::File
+
+
+has_many :link_responses, class_name: SyBancolombia::Collection::Inscription::Payment::Link::Response.name
+has_many :responses, through: :response_links, class_name:SyBancolombia::Collection::Transaction::Payment::Response.name
+
+rails generate model Collection::Inscription::Payment kind:integer file:references
+
+bundle exec rails generate logidze:model Collection::Inscription::Payment
+
+----------------------------------------------------------------------------------------
+
+
+SyBancolombia::Collection::Inscription::Payment::File
++ status: enum (created, in_process, rejected. cancel, uploaded), default: :created, null: false
++ file: attached
+
+=====
+has_logidze
+has_many inscription_payments, class_name: SyBancolombia::Collection::Inscription::Payment
+
+rails generate model Collection::Inscription::Payment::File status:integer file:attachment    ***********
+
+invoke  active_record
+/Users/mauro/Documents/syapp/engines/sy_bancolombia/app/models/sy_bancolombia/collection/inscription/payment.rb:16:in `<class:Payment>': uninitialized constant SyBancolombia::Collection::Inscription::Payment::File (NameError)
+	from /Users/mauro/Documents/syapp/engines/sy_bancolombia/app/models/sy_bancolombia/collection/inscription/payment.rb:2:in `<top (required)>'
+
+  ----------------------------------------------------------------------------------------
+
+  SyBancolombia::Collection::Inscription::Payment::Link::Response
+
++ inscription_payment: references, SyBancolombia::Collection::Inscription::Payment
++ response: references, class_name: SyBancolombia::Collection::Inscription::Payment::Response
++ status_bank: string
++ status_message_bank: string
++ rejection_code : enum SyBancolombia::Transaction::InscriptionRejectedCodes  ******** string? davivienda
+
+
+----------------------------------------------------------------------------------------
+
+SyBancolombia::Collection::Inscription::Payment::Response
+
++ status: enum (created, in_process, processed), default: created, null: false.
++ file: attacment
+=====
+has_many :link_responses, class_name: SyBancolombia::Collection::Inscription::Payment::Link::Response.name
+has_many :inscription_payments, through: :response_links, class_name: SyBancolombia::Collection::Inscription::Payment

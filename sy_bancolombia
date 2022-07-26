@@ -1,3 +1,157 @@
+Cuando se registra una cuenta bancaria o tarjeta se guarda en SyPay::PaymentMethod. Un PaymentMethod tiene
+una inscripción SyPay::PaymentMethod::Inscription y esa inscripción tiene un Gateway que puede ser PayULatam,
+Mercadopago y próximamente bancolombia
+
+La idea es que cuando yo registre una cuenta bancolombia se van a registrar bajo el gateway de bancolombia
+porque actualmente estan por el de davivienda
+
+El kind de un SyPay::PaymentMethod::Inscription puede ser de tipo payment (pago a tercero la nómina por daviplata)
+y collection que se encarga de sacar el dinero de las cuenta del cliente. Entonces las cuentas que se les
+va a cambiar el gateway son las de tipo collection (recaudo)
+
+El inscription_token: número aleatorio que se genera para identificar esta cuenta bancaria en bancolombia o
+davivienda.
+
+ La inscripción es un proceso de 1 a 3 días en los cuales hay un cambio de estado. created, in_process (se envía
+ al banco o se envía un archivo plano), cuando el banco aprueba la inscripción es posible hacer debitos y queda
+ activa
+
+ Cuando se registra una cuenta bancaria se debe crear un registro tambien en SyBancolombia::Inscription::Payment
+ , esta queda referenciado con un SyPay::PaymentMethod::Inscription que a su vez relaciona el gateway
+
+ Adicionalmente se necesita SyBancolombia::Collection::Inscription::Payment que guarda un kind necesario
+ para crear el archivo. Guarda tambien una ref a SyBancolombia::Collection::Inscription::Payment::File
+ que guarda el documento de varias inscripciones de cuentas.
+
+ Por ejemplo, se inscriben 10 cuentas (quedan 10 registros en SyBancolombia::Inscription::Payment,
+ 10 en SyBancolombia::Collection::Inscription::Payment) y hay un proceso que ocurre cada cierto tiempo
+ que genera los archivos que se mandan a bancolombia. Entoncesen SyBancolombia::Collection::Inscription::Payment::File
+ se guarda el archivo de estas 10 inscripciones y finalmente esto se envía al banco.
+
+ Después necesitamos leer la respuesta del banco en SyBancolombia::Collection::Inscription::Payment::Response
+ esta tabla se enlaza con las transacciones por medio de la tabla intermedia
+ SyBancolombia::Collection::Inscription::Payment::Link::Response. Por ahora dejar rejection_code solamente como un
+ enum.
+
+ En las tablas meter librerias discard y logidze
+
+
+ minuto 32:30
+
 rails plugin new name_engine --mountable --skip-test --dummy-path=spec/dummy -d postgresql
 
-rails plugin new sy_bancolombia --mountable --skip-test --dummy-path=spec/dummy -d postgresql
+1. creas tu proyecto:
+  rails plugin new engines/sy_bancolombia --mountable --skip-test --dummy-path=spec/dummy -d postgresql
+
+2. git init.
+
+3. git remote add origin https://mauricioastro85@bitbucket.org/symplifica/sy_bancolombia.git
+
+4. realizas la config:
+  4.a Gemspec
+
+require_relative "lib/sy_bancolombia/version"
+
+Gem::Specification.new do |spec|
+  spec.name        = "sy_bancolombia"
+  spec.version     = SyBancolombia::VERSION
+  spec.authors     = ["mauro"]
+  spec.email       = ["mauricio.castro@symplifica.com"]
+  spec.homepage    = "https://symplifica.com"
+  spec.summary     = "Symplifica Rails engine"
+  spec.description = "Symplifica Rails engine"
+  spec.license     = "MIT"
+
+  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
+  # to allow pushing to a single host or delete this section to allow pushing to any host.
+  spec.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com"
+
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = "https://symplifica.com"
+  spec.metadata["changelog_uri"] = "https://symplifica.com"
+
+  spec.files = Dir.chdir(File.expand_path(__dir__)) do
+    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  end
+
+  spec.add_dependency "rails", ">= 7.0.2.4"
+end
+
+  4.b bundle install
+
+  NO 4.c add to the Gemfile on syapp: (gem_engines array)
+{:name=>"sy_bancolombia", :version=>"1.0.0", :path=>"engines/sy_bancolombia"}
+
+  4.d add to the version file on lib (sy_bancolombia engine)
+module SyBancolombia
+  VERSION = "1.0.0"
+end
+
+  NO 4.e run bundle on syapp root to install the gem.
+
+  NO 4.f To make the engine's functionality accessible from within an application, it needs
+  #to be mounted in that application's config/routes.rb file:
+
+  mount Blorgh::Engine, at: "/blog"
+
+  rails s
+
+  Puma caught this error: nil can't be coerced into Float (TypeError)
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.0.2.4/lib/active_support/notifications/instrumenter.rb:133:in `-'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.0.2.4/lib/active_support/notifications/instrumenter.rb:133:in `duration'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.0.2.4/lib/active_support/core_ext/enumerable.rb:61:in `map'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.0.2.4/lib/active_support/core_ext/enumerable.rb:61:in `sum'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/activesupport-7.0.2.4/lib/active_support/core_ext/enumerable.rb:298:in `sum'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/server_timing.rb:26:in `block in call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/server_timing.rb:25:in `each'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/server_timing.rb:25:in `map'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/server_timing.rb:25:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/executor.rb:14:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/static.rb:23:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/rack-2.2.4/lib/rack/sendfile.rb:110:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/actionpack-7.0.2.4/lib/action_dispatch/middleware/host_authorization.rb:137:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/rack-mini-profiler-3.0.0/lib/mini_profiler/profiler.rb:393:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/railties-7.0.2.4/lib/rails/engine.rb:530:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/configuration.rb:252:in `call'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/request.rb:77:in `block in handle_request'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/thread_pool.rb:340:in `with_force_shutdown'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/request.rb:76:in `handle_request'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/server.rb:441:in `process_client'
+/Users/mauro/.rbenv/versions/3.0.1/lib/ruby/gems/3.0.0/gems/puma-5.6.4/lib/puma/thread_pool.rb:147:in `block in spawn_thread'
+
+added gem puma to gemfile in sy_bancolombia then:
+cd engines/sy_bancolombia
+ bundle install
+
+rails s
+local host on browser throws:
+
+ ActiveRecord::PendingMigrationError
+ Migrations are pending. To resolve this issue, run:
+ bin/rails db:migrate RAILS_ENV=development
+ You have 2 pending migrations:
+ 202207142025339_add_due_date_to_sy_pila_co_pilas.rb
+ 202207191343181_add_notification_at_to_sy_pay_orders.rb
+ Run pending migrations
+
+i verified the migrations exist on bitbucket so i tun rails db:migrate
+
+/Users/mauro/Documents/syapp/engines/sy_maps/lib/sy_maps/engine_notifier.rb:3: warning: previous definition of CLIENT was here
+== 202207142025339 AddDueDateToSyPilaCoPilas: migrating =======================
+-- add_column(:sy_pila_co_pilas, :due_date, :date)
+   -> 0.0355s
+== 202207142025339 AddDueDateToSyPilaCoPilas: migrated (0.0356s) ==============
+
+== 202207191343181 AddNotificationAtToSyPayOrders: migrating ==================
+-- add_column(:sy_pay_orders, :notification_at, :datetime)
+   -> 0.0062s
+== 202207191343181 AddNotificationAtToSyPayOrders: migrated (0.0063s) =========
+
+Gemfile copirarlo y pegarlo de sy_davivienda
+
+restarted the server
+5. subes los cambios
+
+en main
+
+luego cre<s nueva rama para lso modelos

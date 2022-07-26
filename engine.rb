@@ -252,3 +252,11 @@ end
 #we must also modify our belongs_to definition in the Blorgh::Article model:
 
 belongs_to :author, class_name: Blorgh.author_class.to_s
+
+#To set this configuration setting within the application, an initializer should be used. By using an initializer,
+#the configuration will be set up before the application starts and calls the engine's models, which may depend on this configuration setting existing.
+
+#Create a new initializer at config/initializers/blorgh.rb inside the application where the blorgh engine is
+#installed and put this content in it:
+
+Blorgh.author_class = "User"
