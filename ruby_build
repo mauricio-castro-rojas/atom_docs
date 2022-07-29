@@ -1,0 +1,274 @@
+Ruby install
+
+Finding current shell
+For beginners working in a terminal, sometimes it can be confusing to
+guess the shell they are currently working on. So we will assist you too
+in the process of finding the current shell.
+
+Execute the below-given command in your shell.
+
+$ echo $0
+
+Finding the path of bash or zsh shell
+To know the path of your zsh or bash shell, execute the below-given command.
+
+$ which bash
+$ which zsh
+
+Switching bash to zsh
+To switch from bash shell to zsh. For that, in the terminal,
+we execute the “chsh” command in this way:
+
+$ chsh -s $(which zsh)
+
+Switch zsh to bash
+To switch zsh to bash, specify “bash” in the “chsh” command
+and execute it on the terminal.
+
+% chsh -s $(which bash)
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+==> Checking for `sudo` access (which may request your password)...
+Password:
+==> This script will install:
+/usr/local/bin/brew
+/usr/local/share/doc/homebrew
+/usr/local/share/man/man1/brew.1
+/usr/local/share/zsh/site-functions/_brew
+/usr/local/etc/bash_completion.d/brew
+/usr/local/Homebrew
+==> The following new directories will be created:
+/usr/local/bin
+/usr/local/etc
+/usr/local/include
+/usr/local/lib
+/usr/local/sbin
+/usr/local/share
+/usr/local/var
+/usr/local/opt
+/usr/local/share/zsh
+/usr/local/share/zsh/site-functions
+/usr/local/var/homebrew
+/usr/local/var/homebrew/linked
+/usr/local/Cellar
+/usr/local/Caskroom
+/usr/local/Frameworks
+
+Press RETURN/ENTER to continue or any other key to abort:
+
+
+brew install rbenv ruby-build
+
+# Add rbenv to bash so that it loads every time you open a terminal
+echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.zshrc
+source ~/.zshrc
+
+
+rbenv install 3.0.1
+rbenv global 3.0.1
+
+
+restart terminal
+
+ruby -v
+
+Configuring Git
+
+git config --global user.name "Mauricio Castro"
+git config --global user.email mauricio.castro@symplifica.com
+
+cd Documents
+git clone https://github.com/mauricio-castro-sym/atom_docs.git
+
+Rails install
+gem install rails -v 7.0.3.1
+
+rbenv rehash
+
+rails -v
+
+brew install sqlite3
+
+sqlite is keg-only, which means it was not symlinked into /usr/local,
+because macOS already provides this software and installing another version in
+parallel can cause all kinds of trouble.
+
+If you need to have sqlite first in your PATH, run:
+  echo 'export PATH="/usr/local/opt/sqlite/bin:$PATH"' >> ~/.zshrc
+
+For compilers to find sqlite you may need to set:
+  export LDFLAGS="-L/usr/local/opt/sqlite/lib"
+  export CPPFLAGS="-I/usr/local/opt/sqlite/include"
+
+For pkg-config to find sqlite you may need to set:
+  export PKG_CONFIG_PATH="/usr/local/opt/sqlite/lib/pkgconfig"
+
+==> Summary
+🍺  /usr/local/Cellar/sqlite/3.39.2: 11 files, 4.4MB
+==> Running `brew cleanup sqlite`...
+Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+
+
+brew install postgresql
+
+Once this command is finished, it gives you a couple commands to run.
+Follow the instructions and run them:
+
+# To have launchd start postgresql at login:
+brew services start postgresql
+By default the postgresql user is your current OS X
+username with no password. For example, my OS X user is named chris so
+ I can login to postgresql with that username.
+
+
+ To migrate existing data from a previous major version of PostgreSQL run:
+   brew postgresql-upgrade-database
+
+ This formula has created a default database cluster with:
+   initdb --locale=C -E UTF-8 /usr/local/var/postgres
+ For more details, read:
+   https://www.postgresql.org/docs/14/app-initdb.html
+
+ To restart postgresql after an upgrade:
+   brew services restart postgresql
+ Or, if you don't want/need a background service you can just run:
+   /usr/local/opt/postgresql/bin/postgres -D /usr/local/var/postgres
+ ==> Summary
+ 🍺  /usr/local/Cellar/postgresql/14.4: 3,307 files, 44.4MB
+ ==> Running `brew cleanup postgresql`...
+ Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+ Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+ ==> Caveats
+ ==> postgresql
+ To migrate existing data from a previous major version of PostgreSQL run:
+   brew postgresql-upgrade-database
+
+ This formula has created a default database cluster with:
+   initdb --locale=C -E UTF-8 /usr/local/var/postgres
+ For more details, read:
+   https://www.postgresql.org/docs/14/app-initdb.html
+
+ To restart postgresql after an upgrade:
+   brew services restart postgresql
+ Or, if you don't want/need a background service you can just run:
+   /usr/local/opt/postgresql/bin/postgres -D /usr/local/var/postgres
+
+
+
+   sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+   Password:
+   installer: Error - the package path specified was invalid: '/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg'.
+   mauro@192 ~ %
+
+
+
+   rails new myapp -d postgresql
+
+   # Move into the application directory
+   cd myapp
+
+   # If you setup MySQL or Postgres with a username/password, modify the
+   # config/database.yml file to contain the username/password that you specified
+
+   # Create the database
+   rake db:create
+
+   rails server
+
+
+
+----------------------
+syapp
+
+brew tap elastic/tap
+brew install elastic/tap/elasticsearch-full
+brew install redis
+
+Starting and stopping Redis in the foreground
+To test your Redis installation, you can run the redis-server executable
+from the command line:
+
+redis-server
+
+If successful, you'll see the startup logs for Redis, and Redis
+will be running in the foreground.
+
+To stop Redis, enter Ctrl-C.
+
+Starting and stopping Redis using launchd
+As an alternative to running Redis in the foreground,
+you can also use launchd to start the process in the background:
+
+brew services start redis
+
+This launches Redis and restarts it at login. You can check
+the status of a launchd managed Redis by running the following:
+
+brew services info redis
+
+If the service is running, you'll see output like the following:
+
+redis (homebrew.mxcl.redis)
+Running: ✔
+Loaded: ✔
+User: miranda
+PID: 67975
+
+To stop the service, run:
+
+brew services stop redis
+Connect to Redis
+Once Redis is running, you can test it by running redis-cli:
+
+redis-cli
+
+brew install yarn
+brew install node
+
+
+git clone https://mauricioastro85@bitbucket.org/symplifica/syapp.git
+
+bitbucket password to clone repos
+Core i7 ned
+apzYT7mfuVCbU4anhsTb
+
+
+clone all engines
+
+brew install imagemagick ffmpeg libvips
+
+comment mysql2 on gemfile
+bundle install en el directorio de syapp
+yarn install
+
+en el database yml comentar la url y dejar:
+#url: "postgresql://syapp:d823ieyn9dpciu35@sfo-2-db-prod-backup-do-user-6226380-0.b.db.ondigitalocean.com:25060/syapp?sslmode=require"
+database: SyApp_development
+
+touch AuthKey.pem en el directorio de syapp
+brew services list
+brew services start redis
+brew services start elasticsearch-full
+
+$ rails migrations:install
+rails db:drop db:create db:migrate db:test:prepare
+bundle exec rspec
+
+to run rails db:seed:
+comment sy_migration gem_engine on syapp gemfile
+
+comment sy_migration on
+syapp/lib/tasks/deploy.rake:22:in `<main>'  ENGINES_ORDER = [[  y ENGINES = [
+
+add .env in sy_pay and syapp
+
+rails db:seed
+
+
+bin/rails tailwindcss:watch
+
+rails server
+rails dev:cache
+
+localhost:3000/backoffice
