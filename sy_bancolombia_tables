@@ -75,3 +75,12 @@ SyBancolombia::Collection::Inscription::Payment::Response
 =====
 has_many :link_responses, class_name: SyBancolombia::Collection::Inscription::Payment::Link::Response.name
 has_many :inscription_payments, through: :response_links, class_name: SyBancolombia::Collection::Inscription::Payment
+
+
+
+
+
+
+rails generate model Gateway::SyBancolombia name:string is_active:boolean credentials_key:string
+
+bundle exec rails generate logidze:model SyPayCo::Gateway::Bancolombia

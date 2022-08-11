@@ -1,0 +1,45 @@
+spec/factories/sy_bancolombia/collection/inscription/payments.rb
+
+FactoryBot.define do
+  model = ::SyBancolombia::Collection::Inscription::Payment
+  factory_key = model.model_name.singular.to_sym # :sy_bancolombia_collection_inscription_payment
+  factory factory_key, class: model do
+    kind [23, 25].sample
+  end
+end
+
+
+enum?
+
+-----------  ----------- ----------- -----------
+
+spec/models/sy_bancolombia/collection/transaction/payment/link/response_spec.rb
+FactoryBot.define do
+  model = ::SyBancolombia::Collection::Transaction::Payment
+  factory_key = model.model_name.singular.to_sym # :sy_bancolombia_collection_transaction_payment
+  factory factory_key, class: model do
+    file_id { 1 }
+  end
+end
+
+it 'should verify if log_data field exist' do
+   54:     debugger
+=> 55:     state = create(::SyBancolombia::Collection::Transaction::Payment::Link::Response.model_name.singular.to_sym)
+
+al intentar crearlo el campo file_id no debe estar nulo... factory relacionado
+
+-----------  ----------- ----------- -----------
+
+[20, 29] in /Users/mauro/Documents/syapp/engines/sy_bancolombia/spec/models/sy_bancolombia/inscription/payments_spec.rb
+   20:     it { should belong_to(:delegated_inscription) }
+   21:   end
+   22:
+   23:   it 'should verify if log_data field exist' do
+   24:     debugger
+=> 25:     state = create(::SyBancolombia::Inscription::Payment.model_name.singular.to_sym)
+   26:     expect(state.log_data).to eq(nil)
+   27:     expect(state.attributes.include?('log_data')).to be_truthy
+   28:   end
+   29: end
+(byebug) create(::SyBancolombia::Inscription::Payment.model_name.singular.to_sym)
+*** ActiveRecord::AssociationTypeMismatch Exception: SyPay::PaymentMethod::Inscription(#27040) expected, got #<Inscription id: 1, name: nil> which is an instance of Inscription(#36040)

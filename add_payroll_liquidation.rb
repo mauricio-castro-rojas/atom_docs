@@ -22,6 +22,11 @@ SyLiquidationCo::Liquidation.where(contract: SyRegistryCo::Contract
   .where(base_contract: SyRegistry::Contract
     .where(employee: employees, employer: current_employer)), status: [:liquidated, :sent])
 
+#PROBLEMA DE RUTAS, CUANDO HAY VARIAS RUTAS DEFINIDAS CON EL MISMO NOMBRE EN VARIOS ENGINES, ES MEJOR USAR EL
+# NOMBRE COMPLETO
+
+::SyAppLiquidation::Engine.routes.url_helpers.summary_liquidations_path
+
 
 = form.submit id: "upload_file", class: "hidden"
 
@@ -68,3 +73,7 @@ entonces en close payrolls:
 find al payroll
   payroll.end_date > 16
     mandaria second_fortnight si no first fortnight
+
+
+#generar documentos de liquidacion
+SyLiquidationCo::LiquidationMailerJob.perform_now(liquidation_co: liquidation, generate_documents: true )

@@ -33,3 +33,11 @@ admin1@mail.com
 123456Aa
 
 <Employer id: 1, email: "employer_a@mail.com",
+
+
+#Error trying to load backoffice while testing liquidation2203 project
+ActiveRecord::DuplicateMigrationNameError
+Multiple migrations have the name CreateSyCoreQuestionAnswerLinks.
+
+#solve it: check out to main (all engines) and downloaded migrations folder from remote repo, then bundle
+#install and db:drop, create , migrate ,etc. Then db:seed
