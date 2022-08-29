@@ -41,3 +41,6 @@ Multiple migrations have the name CreateSyCoreQuestionAnswerLinks.
 
 #solve it: check out to main (all engines) and downloaded migrations folder from remote repo, then bundle
 #install and db:drop, create , migrate ,etc. Then db:seed
+GoodJob::Job.delete_all
+
+Delayed::Job.delete_all
