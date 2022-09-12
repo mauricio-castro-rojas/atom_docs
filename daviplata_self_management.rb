@@ -23,18 +23,53 @@ not_pending_payrolls = contract_co.payrolls.where(start_date: [Time.now.beginnin
         end
       else
 
+        [#<GoodJob::Job:0x00007f7c8651fae0
+  id: "68189474-578e-4bef-a7ea-519932edd830",
+  queue_name: "inscription_payment_method",
+  priority: 10,
+  serialized_params:
+   {"job_id"=>"68afc94b-093d-4ece-a0f3-e22cf797b938",
+    "locale"=>"es",
+    "priority"=>10,
+    "timezone"=>"America/Bogota",
+    "arguments"=>
+     [{"number"=>"3119998877",
+       "creator"=>{"_aj_globalid"=>"gid://sy-app/Employer/1"},
+       "contract_co"=>{"_aj_globalid"=>"gid://sy-app/SyRegistryCo::Contract/1"},
+       "_aj_ruby2_keywords"=>["contract_co", "number", "creator"]}],
+    "job_class"=>"SyPayCo::SelfManagement::InscriptionPaymentMethodJob",
+    "executions"=>0,
+    "queue_name"=>"inscription_payment_method",
+    "enqueued_at"=>"2022-09-07T18:54:42Z",
+    "provider_job_id"=>nil,
+    "exception_executions"=>{}},
+  scheduled_at: Fri, 16 Sep 2022 00:00:00.000000000 -05 -05:00,
+  performed_at: nil,
+  finished_at: nil,
+  error: nil,
+  created_at: Wed, 07 Sep 2022 13:54:42.612532000 -05 -05:00,
+  updated_at: Wed, 07 Sep 2022 13:54:42.612532000 -05 -05:00,
+  active_job_id: "68afc94b-093d-4ece-a0f3-e22cf797b938",
+  concurrency_key: nil,
+  cron_key: nil,
+  retried_good_job_id: nil,
+  cron_at: nil>]
 
-        enqued_jobs2 = GoodJob::Job
-          .where(queue_name: :change_payroll_payment_method)
+
+        enqued_jobs1 = GoodJob::Job
+          .where(queue_name: :inscription_payment_method)
           .where("
             EXISTS (
                 SELECT * FROM jsonb_array_elements(serialized_params #> '{arguments}') arguments
                 WHERE (arguments -> 'contract_co' ->> '_aj_globalid') = :contract_co
               )
-          ", contract_co: contract_co.to_gid.to_s)
+          ", contract_co: @contract_co.to_gid.to_s)
+
+
+
 
           enqued_jobs2 = GoodJob::Job
-            .where(queue_name: :delete_by_abstract_payment_method)
+            .where(queue_name: :delete_payment_method)
             .where("
               EXISTS (
                   SELECT * FROM jsonb_array_elements(serialized_params #> '{arguments}') arguments
@@ -46,6 +81,35 @@ not_pending_payrolls = contract_co.payrolls.where(start_date: [Time.now.beginnin
 
 
  .update_payment_method_employee_contract_path(params[:employee_contract_id])
+
+ enqued_jobs2 = GoodJob::Job
+   .where(queue_name: :change_payment_frequency)
+   .where("
+     EXISTS (
+         SELECT * FROM jsonb_array_elements(serialized_params #> '{arguments}') arguments
+         WHERE (arguments -> 'contract' ->> '_aj_globalid') = :contract
+       )
+   ", contract: @contract.to_gid.to_s)
+
+   [#<GoodJob::Job:0x00007faf77e67278
+  id: "db6f1563-0e77-4ae5-80fe-f1c3de4f92ed",
+  queue_name: "change_payment_frequency",
+  priority: 10,
+  serialized_params:
+   {"job_id"=>"82be9c4c-9daf-4ea5-ac48-fbea19dd6a38",
+    "locale"=>"es",
+    "priority"=>10,
+    "timezone"=>"America/Bogota",
+    "arguments"=>
+     [{"contract"=>{"_aj_globalid"=>"gid://sy-app/SyRegistry::Contract/2"},
+       "_aj_ruby2_keywords"=>["contract", "frequency_to_change"],
+       "frequency_to_change"=>"mensual"}],
+    "job_class"=>"SyPayCo::SelfManagement::ChangePaymentFrequencyJob",
+    "executions"=>0,
+    "queue_name"=>"change_payment_frequency",
+    "enqueued_at"=>"2022-09-07T13:30:56Z",
+    "provider_job_id"=>nil,
+    "exception_executions"=>{}}
 
 
  = form_with url: save_liquidation_liquidations_path, format: :turbo_stream, :id => 'modal-liquidation-form' do |form|
@@ -63,3 +127,96 @@ not_pending_payrolls = contract_co.payrolls.where(start_date: [Time.now.beginnin
 
         div[class="flex justify-center mt-8 pb-5 text-center"]
             = button_tag "Liquidar empleado", class: "cursor-pointer items-center py-2 mx-3 border border-transparent text-sm md:text-base font-medium rounded-full shadows focus:outline-none focus:ring-2 focus:ring-offset-2 bg-symplifica-red text-white hover:bg-symplifica-hoverred w-full md:w-10/12 lg:w-8/12 px-10", id: "liquidate_employee"
+
+
+days="{:monday=>false, :tuesday=>true, :wednesday=>true, :thursday=>true, :friday=>false, :saturday=>true, :sunday=>false}"
+JSON.parse days.gsub(':', '').gsub('=>', ': ')
+
+
+days="{\"monday\":false,\"tuesday\":true,\"wednesday\":true,\"thursday\":true,\"friday\":false,\"saturday\":true,\"sunday\":false}"
+JSON.parse days
+
+
+data = {"monday"=>false, "tuesday"=>true, "wednesday"=>true, "thursday"=>true, "friday"=>false, "saturday"=>true, "sunday"=>false}
+
+
+days_names = data.map {|k,v| k if v.eql? true}.compact
+
+::SyCore::Day.where(name: days_names).each do |day|
+        contract.day_linkeables.create(day: day, creator: @current_admin)
+      end
+days_names = data.map {|k,v| k if v.eql? true}.compact
+
+
+
+count = 0
+data.each {|k,v| count+=1 if v}
+
+Deseas cambiar los dias de trabajo? Si
+Selecciona los dias a trabajar Lunes, Martes
+days_selection
+[1, 3]
+
+Deseas cambiar los dias de trabajo? Si
+Selecciona los dias a trabajar Domingo, Miércoles, Jueves, Viernes, Sábado
+
+(ruby) days_selection
+[2, 4, 5, 6, 7]
+(rdbg)
+
+
+[#<SyCore::Day:0x00007fab18e60cd8
+  id: 1,
+  name: "monday",
+  created_at: Mon, 01 Aug 2022 08:36:23.706831000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.706831000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90e10
+  id: 2,
+  name: "sunday",
+  created_at: Mon, 01 Aug 2022 08:36:23.717255000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.717255000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90d48
+  id: 3,
+  name: "tuesday",
+  created_at: Mon, 01 Aug 2022 08:36:23.723721000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.723721000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90c80
+  id: 4,
+  name: "wednesday",
+  created_at: Mon, 01 Aug 2022 08:36:23.737950000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.737950000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90bb8
+  id: 5,
+  name: "thursday",
+  created_at: Mon, 01 Aug 2022 08:36:23.742661000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.742661000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90af0
+  id: 6,
+  name: "friday",
+  created_at: Mon, 01 Aug 2022 08:36:23.747177000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.747177000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>,
+ #<SyCore::Day:0x00007fab18e90a28
+  id: 7,
+  name: "saturday",
+  created_at: Mon, 01 Aug 2022 08:36:23.751113000 -05 -05:00,
+  updated_at: Mon, 01 Aug 2022 08:36:23.751113000 -05 -05:00,
+  discarded_at: nil,
+  log_data: nil>]
+
+Aplicar el cambio ahora:
+
+  if Time.zone.now.day < 6
+  si la nomina del trabajador está pendientes o sin ordenes asociadas
+  si la pila del mes no se ha pagado
