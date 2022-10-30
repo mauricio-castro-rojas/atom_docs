@@ -1,0 +1,41 @@
+Hi, my name is mauricio and i am here today for the interview. Thank you very much.
+
+1. Skills and qualities you have that are a must to the role you are applying for:
+
+  I completed a technical degree in digital audio production and managed
+  to get a job in the live music industry. After 5 years i realized  i wasn't cut out for that job
+  and decided to move to a different field.
+
+  I started studying electronic engineering and that led me to become
+  interested in software development.
+
+  I've had a great enthusiasm for technology since an early age. I've always loved computers
+  and gadgets and enjoyed building them and taking them apart.
+
+  I studied web development through online books and tutorials, then a friend of mine
+  helped me to join the company where he works which is actually a startup company. And i
+  started gaining experience in the IT world, and now i have more or less 2 years of experience
+  and i feel really happy working in this area.
+
+
+
+2. Talk about any experience or qualifications you possess that are relevant to the position
+
+  When i joined the startup company I first worked in the support area, primarily solving tickets
+  for an old platform. That required to make SQL queries, and applying direct modifications over a
+  data base to fix wrong employer and employees data.
+
+  I've experience using project management software (atlassian jira), i've worked on remote software
+  installation (through a technology called boardgent),
+  also i've experience on equipment inventory and equipment maintenance.
+
+  Finally my team gave me an opportunity to to move as a ruby on rails software developer,
+  so i took the chance and i get into rails guides, mvc approach, active records queries,
+  active records relations.
+  stimulus js, stimulus reflex, view components, css through tailwind framework,
+
+  and that's it, we use basecamp and agile approach to work on different pitchs making our app
+  more functional and easy to use.
+
+3. Talk about any significant achievements you have gained in your work life or personal life so far.
+4. Talk about the type of person you are and what you are going to do in the role if they hire you

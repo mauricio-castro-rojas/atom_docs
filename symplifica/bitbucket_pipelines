@@ -1,0 +1,22 @@
+Context:
+Working on self management in sy_pay_co engine , when i modified some services i made a pr
+and get an error on pipelines:
+
+
+ running pipelines it get stuck on migrations:install
+
++ bundle exec rails app:$ENGINE_NAME:migrations:install
+/usr/local/lib/ruby/3.0.0/digest.rb:6: warning: already initialized constant Digest::REQUIRE_MUTEX
+/vendor/cache/ruby/3.0.0/gems/digest-3.1.0/lib/digest.rb:20: warning: previous definition of REQUIRE_MUTEX was here
+rails aborted!
+NoMethodError: undefined method `configure' for Hubspot:Module
+/opt/atlassian/pipelines/agent/build/spec/dummy/config/environment.rb:5:in `<top (required)>'
+Tasks: TOP => app:sy_pay_co:migrations:install => app:environment
+(See full trace by running task with --trace)
+
+How to fix it:
+
+In the working branch
+Update sy_pay_co gemfile for sy_maps and sy_core latest versions.
+
+git add commit and push

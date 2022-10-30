@@ -84,3 +84,58 @@ has_many :inscription_payments, through: :response_links, class_name: SyBancolom
 rails generate model Gateway::SyBancolombia name:string is_active:boolean credentials_key:string
 
 bundle exec rails generate logidze:model SyPayCo::Gateway::Bancolombia
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+Add a column to a table
+In this case we are going to add a modifier to ::SyBancolombia::Collection::Inscription::Payment::File model
+for daily tracking
+
+the column should be a tring type with a limit of 1 character
+rails g model --help
+For integer, string, text and binary fields, an integer in curly braces will
+   be set as the limit:
+
+       `bin/rails generate model user pseudo:string{30}`
+
+   For decimal, two integers separated by a comma in curly braces will be used
+   for precision and scale:
+
+       `bin/rails generate model product 'price:decimal{10,2}'`
+
+   You can add a `:uniq` or `:index` suffix for unique or standard indexes
+   respectively:
+
+       `bin/rails generate model user pseudo:string:uniq`
+       `bin/rails generate model user pseudo:string:index`
+
+   You can combine any single curly brace option with the index options:
+
+       `bin/rails generate model user username:string{30}:uniq`
+       `bin/rails generate model product supplier:references{polymorphic}:index`
+
+
+Command
+bin/rails generate migration AddModifierToSyBancolombiaCollectionInscriptionPaymentFiles modifier:string{1}
+
+created file:
+class AddModifierToSyBancolombiaCollectionInscriptionPaymentFiles < ActiveRecord::Migration[7.0]
+  def change
+    add_column :sy_bancolombia_collection_inscription_payment_files, :modifier, :string, limit: 1
+  end
+end
+
+move it to installer folder and change stamp
+21_add_modifier_to_sy_bancolombia_collection_inscription_payment_files.rb
+
+add it to install_generator
+migration_template 'migrations/21_add_modifier_to_sy_bancolombia_collection_inscription_payment_files.rb', 'db/migrate/add_modifier_to_sy_bancolombia_collection_inscription_payment_files.rb'
+
+install migrations in syapp terminal
+rails migrations:install
+
+rails db:migrate
+
+
+bin/rails generate migration AddModifierToSyBancolombiaCollectionTransactionPaymentFiles modifier:string{1}

@@ -6,7 +6,7 @@ Then, use the number in the PID column to kill the process:
 
 $ kill -9 PID
 
-kill -9 $(lsof -t -i:3000)
+  kill -9 $(lsof -t -i:3000)
 
 
 #start tailwind SERVICE

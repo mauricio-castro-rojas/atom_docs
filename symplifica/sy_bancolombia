@@ -1,27 +1,37 @@
-Cuando se registra una cuenta bancaria o tarjeta se guarda en SyPay::PaymentMethod. Un PaymentMethod tiene
-una inscripción SyPay::PaymentMethod::Inscription y esa inscripción tiene un Gateway que puede ser PayULatam,
+Cuando se registra una cuenta bancaria o tarjeta se guarda en SyPay::PaymentMethod con información del holder,
+un creador, si es principal y el estado. Por esto se relaciona el modelo de PaymentMethod con las tablas
+AccountBank y CreditCard ya que un paymentmethod puede ser una cuenta bancaria o una tarjeta de credito
+
+Un PaymentMethod tiene
+una inscripción SyPay::PaymentMethod::Inscription y esa inscripción tiene un gateway (referencia ese paymentmethod con
+un tercero que va a procesar ese recaudo , es decir que va a sacar ese dinero de la cuenta del cliente)
+
+ un Gateway que puede ser PayULatam, Daviplata
 Mercadopago y próximamente bancolombia
 
-La idea es que cuando yo registre una cuenta bancolombia se van a registrar bajo el gateway de bancolombia
-porque actualmente estan por el de davivienda
+La idea es que Cuando un cliente entre a mi cuenta y registre una cuenta bancaria con bancolombia, este quede
+registrado en el gateway bancolombia por que actualmente estan bajo el gateway de davivienda sin importar
+el banco de donde se saca dinero del cliente
 
-El kind de un SyPay::PaymentMethod::Inscription puede ser de tipo payment (pago a tercero la nómina por daviplata)
-y collection que se encarga de sacar el dinero de las cuenta del cliente. Entonces las cuentas que se les
+El kind de un SyPay::PaymentMethod::Inscription puede ser de tipo payment (dispersion o pago a tercero la nómina por daviplata)
+y collection que se encarga de sacar el dinero de las cuenta del cliente (recaudo). Entonces las cuentas que se les
 va a cambiar el gateway son las de tipo collection (recaudo)
 
-El inscription_token: número aleatorio que se genera para identificar esta cuenta bancaria en bancolombia o
-davivienda.
+El inscription_token: número aleatorio que se genera cuando enviamos la inscripcion a davivienda
+para identificar esta cuenta bancaria
 
  La inscripción es un proceso de 1 a 3 días en los cuales hay un cambio de estado. created, in_process (se envía
  al banco o se envía un archivo plano), cuando el banco aprueba la inscripción es posible hacer debitos y queda
  activa
 
- Cuando se registra una cuenta bancaria se debe crear un registro tambien en SyBancolombia::Inscription::Payment
+ Cuando se registra una cuenta bancaria en bancolombia
+se debe crear un registro tambien en SyBancolombia::Inscription::Payment
  , esta queda referenciado con un SyPay::PaymentMethod::Inscription que a su vez relaciona el gateway
 
  Adicionalmente se necesita SyBancolombia::Collection::Inscription::Payment que guarda un kind necesario
  para crear el archivo. Guarda tambien una ref a SyBancolombia::Collection::Inscription::Payment::File
- que guarda el documento de varias inscripciones de cuentas.
+ que guarda el documento que se genera con varias inscripciones de cuentas.
+
 
  Por ejemplo, se inscriben 10 cuentas (quedan 10 registros en SyBancolombia::Inscription::Payment,
  10 en SyBancolombia::Collection::Inscription::Payment) y hay un proceso que ocurre cada cierto tiempo
@@ -155,3 +165,45 @@ restarted the server
 en main
 
 luego cre<s nueva rama para lso modelos
+
+
+
+
+
+
+cargar un engine en syapp
+
+una vez creado se añade al Gemfile
+{:name=>"sy_bancolombia", :version=>"1.0.0", :path=>"engines/sy_bancolombia"},
+
+luego añadirlo tambien a
+lib/tasks/migrations.rake
+
+bundle install y correr migraciones en syapp
+rails migrations:install
+
+rails db:migrate
+
+lib/tasks/migrations.rake:
+
+namespace :migrations do
+  desc 'Get migrations files from engines for SyApp'
+  task install: :environment do
+    system 'rails g sy_maps:install --skip'
+    system 'rails g sy_pay:install --skip'
+    system 'rails g sy_core:install --skip'
+    system 'rails g sy_registry:install --skip'
+    system 'rails g sy_registry_co:install --skip'
+    system 'rails g sy_payroll_co:install --skip'
+    system 'rails g sy_pila_co:install --skip'
+    system 'rails g sy_davivienda:install --skip'
+    sleep 1
+    system 'rails g sy_bancolombia:install --skip'
+    system 'rails g sy_pay_co:install --skip'
+    sleep 1
+    system 'rails g sy_liquidation_co:install --skip'
+    sleep 1
+    system 'rails g sy_blog:install --skip'
+    system 'rails g sy_benefit:install --skip'
+  end
+end
