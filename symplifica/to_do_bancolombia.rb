@@ -1,25 +1,8 @@
-1. Check collection agreement over all models, consult with product -> check
-
 2. Definir fecha de programación de debitos (inicio y fin) -> check parcial, preguntar si hay días no validos para la fecha de inicio
-
-3. PREGUNTAR MAPEO, (DIEGO SOLO TENIA UN PAR DE ESTADOS Y VALIDABA INTERNAMENTE) -> ok
 
 4. validar que nunca se envien tarjetas de credito para inscribir (03)
 
-5. Se manejan ach para recaudos? -> si
-
-
-6. Se manejan debitos parciales? -> no solo total
-
-
-
-7. Archivo de codigos de respuesta
-Asobancaria 2001 y 2011 (Nuevo sistema de Recaudos)	D42 (Nuevo sistema de Recaudos)	Débito parcial no válido		RECHAZADAS
-Asobancaria 2001 y 2011	D42	Registro duplicado	RECHAZADAS	RECHAZADAS -> nuevo sistema cambiar codigo
-
-
 8. Código de respuesta para archivos de inscripción C07, Sumatoria de débitos no es numérico? porque si es un archivo de inscripcion no de debito
-
 
 9. Importantisimo el sistema de bancolombia no diferencia entre inscripción y recaudo de esta manera si se envia Inscripcion
 con mod 'A' y el mismo dia se manda recaudo, el mod de recaudo debe ser 'B'  
@@ -132,22 +115,21 @@ bbva.save!
 
 11. Hacer script que actualice los kinds en los seeds de sy pay -> check
 puts '    # Kind'
-            savings_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'savings', codes: { davivienda: 'CA', bancolombia: '01'}, is_active: true
-            regular_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'regular', codes: { davivienda: 'CC', bancolombia: '02'}, is_active: true
-            daviplata_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'daviplata', codes: { davivienda: 'DP'}, is_active: true
+savings_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'savings', codes: { davivienda: 'CA', bancolombia: '01'}, is_active: true
+regular_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'regular', codes: { davivienda: 'CC', bancolombia: '02'}, is_active: true
+daviplata_account_bank_kind = ::SyPay::PaymentMethod::AccountBank::Kind.create! name: 'daviplata', codes: { davivienda: 'DP'}, is_active: true
 
-            Script
-            savings = ::SyPay::PaymentMethod::AccountBank::Kind.where(name: 'savings').first
-            savings.update!(codes: { davivienda: 'CA', bancolombia: '01'})
+Script
+savings = ::SyPay::PaymentMethod::AccountBank::Kind.where(name: 'savings').first
+savings.update!(codes: { davivienda: 'CA', bancolombia: '01'})
 
-            regular = ::SyPay::PaymentMethod::AccountBank::Kind.where(name: 'regular').first
-            regular.update!(codes: { davivienda: 'CC', bancolombia: '02'})
+regular = ::SyPay::PaymentMethod::AccountBank::Kind.where(name: 'regular').first
+regular.update!(codes: { davivienda: 'CC', bancolombia: '02'})
 
   Estos se usan en el gateway de bancolombia para enviar el kind al generador
   account_bank_kind: inscription.payment_method.kind.codes['bancolombia'].to_s,
 
-  12. Preguntar dias de reintento reservado archivo de inscripcion de Cuentas -> no vamos a hacer reintentos por bancolombia sino internamente.
-
+12. Preguntar dias de reintento reservado archivo de inscripcion de Cuentas -> no vamos a hacer reintentos por bancolombia sino internamente.
 
 13. Incsripciones reservado campo . Preguntar bancolombia si tenemos validacion en base de datos
 "- Criterios para la aplicación (Posición 19 a 20):
@@ -192,14 +174,11 @@ Nota: si el registro corresponde a una programación para cuentas de otros banco
       )
 
 
-15. preguntar total codigos de bancos en archivos (44) vs SyPay::Bank.all.count 24, son necesarios registrarlos que no están en los sy_pay_payment_method_inscriptions
--> check
-
 17. falta el modificador de archivo en el registro de encabezado de archivo
 crear un registro para poder consultar:
 
 #abre archivo y lo almacena en la variable file
-file=::SyBancolombia::Collection::Inscription::Payment::File.new(modifier: 'A')
+file=::SyBancolombia::Collection::Inscription::Payment::File.new(modifier: 'B')
 #<SyBancolombia::Collection::Inscription::Payment::File:0x00007fc9e266d948
  id: nil,
  status: "created",
@@ -226,7 +205,7 @@ file=::SyBancolombia::Collection::Inscription::Payment::File.new(modifier: 'A')
  file.save! #guarda en base de datos
  f1.close
 
- file2=::SyBancolombia::Collection::Inscription::Payment::File.new(modifier: 'B')
+ file2=::SyBancolombia::Collection::Inscription::Payment::File.new(modifier: 'C')
 
 
   f2 = File.new('t.txt', File::RDWR)
@@ -250,10 +229,6 @@ REC
 PAG
 ... penditente pab
 
-19. definir validación de modificador de archivo existente para inscripciones-> check
-
-20. Crear implementacion del file modifier para recaudos. modificar el file
-modifierde inscripcion para que consulte tambien los file modifiers de los recaudos ->check
 
 21. Como funcionan los jobs de inscripciones y recaudo, cada cuanto se deben llamar , lo mismo los de procesamiento de ESTADOS
 
@@ -281,3 +256,29 @@ si ejecuto el job de inscripcion para una cuenta ach el inicio de programacion d
 luego, si ejecuto el job de recaudo ese mismo dia, la fecha de ejecucion o fecha de expiracion que es el momento en el que se debita al clientes
 tiene la fecha del instante en que se ejecuta el job, por lo tanto al ejecutarse el mismo dia que se inscribe abria conflicots porque la fecha de inicio esta
 programada para dentro de dos dias pero el recaudo se esta ejecutando el mismo dia
+
+
+24. Validacion con bancolombia.
+Código de respuesta rechazado
+Asobancaria 2001 y 2011	D03	Cuenta a debitar no es numérica	RECHAZADAS	RECHAZADOS
+
+Asobancaria 2001 y 2011	D26	Nit del pagador no es un campo numérico	RECHAZADAS	RECHAZADOS
+
+Archivo de entrada
+	7	Número de cuenta del cliente pagador	17	Alfanumérico	Obligatorio	De acuerdo a cada compañía
+  	Número de cuenta o de tarjeta de crédito del cliente pagador del servicio. Para el caso de tarjetas de crédito deben ser siempre Bancolombia.
+
+
+    8	"No. Identificación
+  del cliente"	16	Alfanumérico	Obligatorio	De acuerdo a cada compañía	Número de NIT o CC del cliente pagador del servicio. Este debe ser enviado sin dígito de verificación.
+
+
+  en que punto durante la generacion de una archivo de inscripcion se actualizan estas tablas
+
+  def sy_davivienda_inscription_payments
+    ::SyDavivienda::Inscription::Payment.where(inscription: sy_pay_payment_method_inscriptions)
+  end
+
+  def sy_davivienda_collection_inscription_payments
+    ::SyDavivienda::Collection::Inscription::Payment.where(inscription: sy_davivienda_inscription_payments)
+  end

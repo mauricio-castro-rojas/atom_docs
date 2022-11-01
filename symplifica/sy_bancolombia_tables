@@ -139,3 +139,40 @@ rails db:migrate
 
 
 bin/rails generate migration AddModifierToSyBancolombiaCollectionTransactionPaymentFiles modifier:string{1}
+
+
+
+-----------------------------------
+
+Error creating a SyBancolombia::Collection::Transaction::Payment object with a file_id column
+referencing a File object. The first  migration has null false
+
+class CreateSyBancolombiaCollectionTransactionPayments < ActiveRecord::Migration[7.0]
+  def change
+    create_table :sy_bancolombia_collection_transaction_payments do |t|
+      t.references :file, null: false, index: { name: 'sy_bancolombia_collection_transaction_payments_file' }
+
+so executing:
+collection_transaction_order = ::SyBancolombia::Collection::Transaction::Payment.create!
+gives
+ActiveRecord::NotNullViolation: PG::NotNullViolation: ERROR:  null value in column "file_id" of
+relation "sy_bancolombia_collection_transaction_payments" violates not-null constraint
+
+
+Solution:
+
+Create a migration in the engine sybancolombia
+rails g migration ChangeFileInSybancolombiaCollectionTransactionPayments
+
+edit it:
+class ChangeFileInSybancolombiaCollectionTransactionPayments < ActiveRecord::Migration[7.0]
+  def change
+    change_column_null(:sy_bancolombia_collection_transaction_payments, :file_id, true)
+  end
+end
+
+change to install folder and generator, then in syapp
+
+rails migrations:install
+
+rails db:migrate
