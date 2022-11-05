@@ -6,27 +6,26 @@ Un PaymentMethod tiene
 una inscripción SyPay::PaymentMethod::Inscription y esa inscripción tiene un gateway (referencia ese paymentmethod con
 un tercero que va a procesar ese recaudo , es decir que va a sacar ese dinero de la cuenta del cliente)
 
- un Gateway que puede ser PayULatam, Daviplata
-Mercadopago y próximamente bancolombia
+Un Gateway puede ser PayULatam, Daviplata , Mercadopago y próximamente bancolombia
 
 La idea es que Cuando un cliente entre a mi cuenta y registre una cuenta bancaria con bancolombia, este quede
-registrado en el gateway bancolombia por que actualmente estan bajo el gateway de davivienda sin importar
+registrado en el gateway bancolombia por que actualmente están bajo el gateway de davivienda sin importar
 el banco de donde se saca dinero del cliente
 
 El kind de un SyPay::PaymentMethod::Inscription puede ser de tipo payment (dispersion o pago a tercero la nómina por daviplata)
 y collection que se encarga de sacar el dinero de las cuenta del cliente (recaudo). Entonces las cuentas que se les
 va a cambiar el gateway son las de tipo collection (recaudo)
 
-El inscription_token: número aleatorio que se genera cuando enviamos la inscripcion a davivienda
+El inscription_token: número aleatorio que se genera cuando enviamos la inscripción a davivienda
 para identificar esta cuenta bancaria
 
  La inscripción es un proceso de 1 a 3 días en los cuales hay un cambio de estado. created, in_process (se envía
- al banco o se envía un archivo plano), cuando el banco aprueba la inscripción es posible hacer debitos y queda
+ al banco o se envía un archivo plano), cuando el banco aprueba la inscripción es posible hacer débitos y queda
  activa
 
  Cuando se registra una cuenta bancaria en bancolombia
-se debe crear un registro tambien en SyBancolombia::Inscription::Payment
- , esta queda referenciado con un SyPay::PaymentMethod::Inscription que a su vez relaciona el gateway
+ se debe crear un registro también en SyBancolombia::Inscription::Payment,
+ este queda referenciado con un SyPay::PaymentMethod::Inscription que a su vez relaciona el gateway
 
  Adicionalmente se necesita SyBancolombia::Collection::Inscription::Payment que guarda un kind necesario
  para crear el archivo. Guarda tambien una ref a SyBancolombia::Collection::Inscription::Payment::File
@@ -35,7 +34,7 @@ se debe crear un registro tambien en SyBancolombia::Inscription::Payment
 
  Por ejemplo, se inscriben 10 cuentas (quedan 10 registros en SyBancolombia::Inscription::Payment,
  10 en SyBancolombia::Collection::Inscription::Payment) y hay un proceso que ocurre cada cierto tiempo
- que genera los archivos que se mandan a bancolombia. Entoncesen SyBancolombia::Collection::Inscription::Payment::File
+ que genera los archivos que se mandan a bancolombia. Entonces en SyBancolombia::Collection::Inscription::Payment::File
  se guarda el archivo de estas 10 inscripciones y finalmente esto se envía al banco.
 
  Después necesitamos leer la respuesta del banco en SyBancolombia::Collection::Inscription::Payment::Response
@@ -46,7 +45,7 @@ se debe crear un registro tambien en SyBancolombia::Inscription::Payment
  En las tablas meter librerias discard y logidze
 
 
- minuto 32:30
+
 
 rails plugin new name_engine --mountable --skip-test --dummy-path=spec/dummy -d postgresql
 

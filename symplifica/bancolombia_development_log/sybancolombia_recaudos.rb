@@ -159,6 +159,7 @@ employers = [ employer1, employer2, employer3 ]
 
 
 
+
 ::SyPay::Transaction
       .joins(payment_method_inscription: :gateway)
       .where(
@@ -210,7 +211,7 @@ file.file.attach(
 file.save!
 f1.close
 
-sy_bancolombia_collection_transaction1_order1 = ::SyBancolombia::Collection::Transaction::Payment.create!(file: file)
+sy_bancolombia_collection_transaction1_payment = ::SyBancolombia::Collection::Transaction::Payment.create!(file: file)
 ::SyBancolombia::Transaction::Payment.create! _transaction: transaction1_order1, delegated_transaction: sy_bancolombia_collection_transaction1_order1
 transaction1_order1.created!
 
@@ -241,19 +242,37 @@ transaction1_order1.created!
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
+#script to execute response file for transaction  reader job
 
-script to execute response file for inscription  reader job
-
-path = ::SyPayCo::Engine.root.join('db', 'seeds', 'bancolombia_files', 'collection_inscription_response.txt')
+path = ::SyPayCo::Engine.root.join('db', 'seeds', 'bancolombia_files', 'collection_transaction_response.txt')
 #we should put that file on that directory first
 
-collection_inscription_payment_response = ::SyBancolombia::Collection::Inscription::Payment::Response.new
-collection_inscription_payment_response.file.attach(
+collection_transaction_payment_response = ::SyBancolombia::Collection::Transaction::Payment::Response.new
+collection_transaction_payment_response.file.attach(
   io: File.open(path),
-  filename: 'collection_inscription_response.txt',
+  filename: 'collection_transaction_response.txt',
   content_type: 'text/plain',
   identify: false
 )
-collection_inscription_payment_response.save!
+collection_transaction_payment_response.save!
 
-::SyPayCo::Collection::Inscription::Payment::Response::File::Bancolombia::ReadJob.perform_now(collection_inscription_payment_response)
+::SyPayCo::Collection::Transaction::Payment::Response::File::Bancolombia::ReadJob.perform_now(collection_transaction_payment_response)
+
+Couldn't find SyBancolombia::Transaction::Payment with [WHERE "sy_bancolombia_transaction_payments"."discarded_at" IS NULL AND "sy_bancolombia_transaction_payments"."_transaction_id" = $1]):
+
+
+#Link response created successfully
+[#<SyBancolombia::Collection::Transaction::Payment::Link::Response:0x00007ff45c82eee0
+  id: 1,
+  transaction_payment_id: 6,
+  response_id: 9,
+  status_code_bank: "D10",
+  status_bank: "rejected",
+  status_message_bank: "non_existent_account_bank_to_debit",
+  slug: "1cee45b6-1e23-4af9-a02a-a8b98a907dfa",
+  token: "1cee45b6-1e23-4af9-a02a-a8b98a907dfa",
+  public_token: "8f2edb3e-56db-4799-a93c-38cde2dac95b",
+  discarded_at: nil,
+  created_at: Fri, 04 Nov 2022 06:57:33.165751000 -05 -05:00,
+  updated_at: Fri, 04 Nov 2022 06:57:33.165751000 -05 -05:00,
+  log_data: nil>]
