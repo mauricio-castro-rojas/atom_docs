@@ -1,6 +1,6 @@
 rails new chat --skip-javascript
 
-add to the gemfile and run bundle
+#add to the gemfile and run bundle:
 
 gem "hotwire-rails" #includes the full setup for turbo and stimulus
 
